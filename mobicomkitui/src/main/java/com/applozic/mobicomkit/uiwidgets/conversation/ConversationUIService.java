@@ -455,11 +455,24 @@ public class ConversationUIService {
             return;
         }
         ConversationFragment conversationFragment = getConversationFragment();
+        Contact contact = conversationFragment.getContact();
         Log.i(TAG, "Received typing status for: " + userId);
-        if (conversationFragment.getContact() != null && userId.equals(conversationFragment.getContact().getContactIds())) {
+        if (contact != null && userId.equals(contact.getContactIds())) {
             conversationFragment.updateUserTypingStatus(userId, isTypingStatus);
         }
 
+    }
+
+    public void updateBusyMessageStatus(String userId){
+        if (!BroadcastService.isIndividual()) {
+            return;
+        }
+        ConversationFragment conversationFragment = getConversationFragment();
+        Contact contact = conversationFragment.getContact();
+        Log.i(TAG, "Received update user busy status for: " + userId);
+        if (contact != null && userId.equals(contact.getContactIds())) {
+            conversationFragment.updateUserBusyStatus();
+        }
     }
 
     public void updateChannelSync() {

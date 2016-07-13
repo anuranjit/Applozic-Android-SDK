@@ -17,6 +17,7 @@ public class ApplozicClient {
     private static final String HANDLE_DIAL = "CLIENT_HANDLE_DIAL";
     private static final String CHAT_LIST_HIDE_ON_NOTIFICATION = "CHAT_LIST_HIDE_ON_NOTIFICATION";
     private static final String CONTEXT_BASED_CHAT = "CONTEXT_BASED_CHAT";
+    private static final String USER_BUSY_STATUS = "USER_BUSY_STATUS";
     private static final String NOTIFICATION_SMALL_ICON= "NOTIFICATION_SMALL_ICON";
     private static final String APP_NAME = "APP_NAME";
     public static ApplozicClient applozicClient;
@@ -100,4 +101,13 @@ public class ApplozicClient {
         sharedPreferences.edit().putString(APP_NAME, notficationAppName).commit();
         return this;
     }
+
+    public void setUserBusyStatus(boolean enable){
+        sharedPreferences.edit().putBoolean(USER_BUSY_STATUS, enable).apply();
+    }
+
+    public boolean isUserBusyStatus(){
+        return sharedPreferences.getBoolean(USER_BUSY_STATUS, false);
+    }
+
 }

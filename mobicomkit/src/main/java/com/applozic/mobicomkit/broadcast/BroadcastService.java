@@ -11,6 +11,7 @@ import com.applozic.mobicomkit.api.conversation.Message;
 
 import com.applozic.mobicommons.commons.core.utils.Utils;
 import com.applozic.mobicommons.json.GsonUtils;
+import com.applozic.mobicommons.people.channel.Conversation;
 
 /**
  * Created by devashish on 24/1/15.
@@ -167,6 +168,15 @@ public class BroadcastService {
         sendBroadcast(context, intent);
     }
 
+    public static void sendUserBusy(Context context, String action,String currentUserId){
+        Log.i(TAG, "Sending  Broadcast for userBusy ......");
+        Intent intent = new Intent();
+        intent.setAction(action);
+        intent.putExtra(Conversation.USER_ID_KEY, currentUserId);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        sendBroadcast(context, intent);
+    }
+
     public static IntentFilter getIntentFilter() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(INTENT_ACTIONS.FIRST_TIME_SYNC_COMPLETE.toString());
@@ -188,6 +198,7 @@ public class BroadcastService {
         intentFilter.addAction(INTENT_ACTIONS.MESSAGE_READ_AND_DELIVERED.toString());
         intentFilter.addAction(INTENT_ACTIONS.MESSAGE_READ_AND_DELIVERED_FOR_CONTECT.toString());
         intentFilter.addAction(INTENT_ACTIONS.CHANNEL_SYNC.toString());
+        intentFilter.addAction(INTENT_ACTIONS.USER_BUSY.toString());
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         return intentFilter;
     }
@@ -197,7 +208,7 @@ public class BroadcastService {
         SYNC_MESSAGE, DELETE_MESSAGE, DELETE_CONVERSATION, MESSAGE_DELIVERY, MESSAGE_DELIVERY_FOR_CONTACT, INSTRUCTION,
         UPLOAD_ATTACHMENT_FAILED, MESSAGE_ATTACHMENT_DOWNLOAD_DONE, MESSAGE_ATTACHMENT_DOWNLOAD_FAILD,
         UPDATE_LAST_SEEN_AT_TIME,UPDATE_TYPING_STATUS, MESSAGE_READ_AND_DELIVERED, MESSAGE_READ_AND_DELIVERED_FOR_CONTECT,CHANNEL_SYNC,
-        CONTACT_VERIFIED, NOTIFY_USER, MQTT_DISCONNECTED,UPDATE_NAME
+        CONTACT_VERIFIED, NOTIFY_USER, MQTT_DISCONNECTED,UPDATE_NAME, USER_BUSY
     }
 
     public static void sendBroadcast(Context context, Intent intent) {

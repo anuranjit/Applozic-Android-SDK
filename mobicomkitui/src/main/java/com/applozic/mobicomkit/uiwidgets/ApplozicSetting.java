@@ -49,7 +49,7 @@ public class ApplozicSetting {
     private static final String SENT_MESSAGE_LINK_TEXT_COLOR = "SENT_MESSAGE_LINK_TEXT_COLOR";
     private static final String RECEIVED_MESSAGE_LINK_TEXT_COLOR  = "RECEIVED_MESSAGE_LINK_TEXT_COLOR";
     private static final String MESSAGE_EDITTEXT_HINT_TEXT_COLOR= "MESSAGE_EDITTEXT_HINT_TEXT_COLOR";
-
+    private static final String USER_IS_BUSY_MESSAGE = "User is busy";
     private static final String HIDE_GROUP_ADD_MEMBERS_BUTTON = "HIDE_GROUP_ADD_MEMBERS_BUTTON";
     private static final String HIDE_GROUP_NAME_UPDATE_BUTTON= "HIDE_GROUP_NAME_UPDATE_BUTTON";
     private static final String HIDE_GROUP_EXIT_BUTTON= "HIDE_GROUP_EXIT_BUTTON";
@@ -543,6 +543,13 @@ public class ApplozicSetting {
 
     public boolean isActionDialWithoutCallingEnabled() {
         return sharedPreferences.getBoolean(SHOW_ACTION_DIAL_WITH_OUT_CALLING, false);
+    }
+    public void setUserIsBusyMessage(String message){
+        sharedPreferences.edit().putString(USER_IS_BUSY_MESSAGE, message).apply();
+    }
+
+    public String getUserIsBusyMessage(){
+        return sharedPreferences.getString(USER_IS_BUSY_MESSAGE, USER_IS_BUSY_MESSAGE);
     }
 
     public boolean clearAll() {

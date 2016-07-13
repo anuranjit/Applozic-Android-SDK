@@ -1353,19 +1353,29 @@ abstract public class MobiComConversationFragment extends Fragment implements Vi
         this.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                int visibilityStatus = View.GONE;
+                String text = "";
                 if (isTypingStatus.equals("1")) {
-                    statusMessageLayout.setVisibility(View.VISIBLE);
-                    isTyping.setVisibility(View.VISIBLE);
-                    isTyping.setText(contact.getDisplayName() + " " + getString(R.string.is_typing));
-                } else {
-                    statusMessageLayout.setVisibility(View.GONE);
-                    isTyping.setVisibility(View.GONE);
-                    isTyping.setText("");
+                    visibilityStatus = View.VISIBLE;
+                    text =contact.getDisplayName() + " " + getString(R.string.is_typing);
                 }
+                statusMessageLayout.setVisibility(visibilityStatus);
+                isTyping.setVisibility(visibilityStatus);
+                isTyping.setText(text);
             }
         });
     }
 
+    public void updateUserBusyStatus() {
+        this.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                statusMessageLayout.setVisibility(View.VISIBLE);
+                isTyping.setVisibility(View.VISIBLE);
+                isTyping.setText(applozicSetting.getUserIsBusyMessage());
+            }
+        });
+    }
 //    public void onEmojiconClicked(Emojicon emojicon) {
 //        //TODO: Move OntextChangeListiner to EmojiEditableTExt
 //        int currentPos = messageEditText.getSelectionStart();

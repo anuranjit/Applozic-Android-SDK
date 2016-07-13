@@ -4,7 +4,9 @@ import android.content.Context;
 import android.os.Process;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.applozic.mobicomkit.ApplozicClient;
 import com.applozic.mobicomkit.api.HttpRequestUtils;
 import com.applozic.mobicomkit.api.MobiComKitClientService;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
@@ -33,7 +35,9 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -64,6 +68,7 @@ public class MessageClientService extends MobiComKitClientService {
     public static final String ARGUMRNT_SAPERATOR = "&";
     public static final String UPDATE_READ_STATUS_FOR_SINGLE_MESSAGE_URL = "/rest/ws/message/read";
     public static final String MESSAGE_INFO_URL = "/rest/ws/message/info";
+    public static final String BUSY_WITH_OTHER = "BUSY_WITH_OTHER";
 
     private static final String TAG = "MessageClientService";
     /* public static List<Message> recentProcessedMessage = new ArrayList<Message>();
@@ -309,7 +314,7 @@ public class MessageClientService extends MobiComKitClientService {
     public void processMessage(Message message) throws Exception {
 
         boolean isBroadcast = (message.getMessageId() == null);
-
+        ApplozicClient applozicClient = ApplozicClient.getInstance(context);
         MobiComUserPreference userPreferences = MobiComUserPreference.getInstance(context);
         message.setSent(Boolean.TRUE);
         message.setSendToDevice(Boolean.FALSE);
@@ -382,8 +387,11 @@ public class MessageClientService extends MobiComKitClientService {
         newMessage.setStoreOnDevice(message.isStoreOnDevice());
         newMessage.setDelivered(message.getDelivered());
         newMessage.setStatus(message.getStatus());
-        newMessage.setMetadata(message.getMetadata());
-
+        Map<String, String> userStatus = message.getMetadata();
+        if (applozicClient.isUserBusyStatus()) {
+            userStatus.put("userStatus", "4");
+        }
+        newMessage.setMetadata(userStatus);
         newMessage.setSendToDevice(message.isSendToDevice());
         newMessage.setContentType(message.getContentType());
         newMessage.setConversationId(message.getConversationId());
@@ -401,10 +409,15 @@ public class MessageClientService extends MobiComKitClientService {
 
         try {
             String response = new MessageClientService(context).sendMessage(newMessage);
+            if(response != null && response.contains(BUSY_WITH_OTHER)){
+                BroadcastService.sendUserBusy(context, BroadcastService.INTENT_ACTIONS.USER_BUSY.toString(), contact != null ? contact.getUserId() : null);
+                return;
+            }
             if(message.hasAttachment() && TextUtils.isEmpty(response) && !message.isContactMessage() ){
                 messageDatabaseService.updateCanceledFlag(messageId, 1);
                 BroadcastService.sendMessageUpdateBroadcast(context, BroadcastService.INTENT_ACTIONS.UPLOAD_ATTACHMENT_FAILED.toString(), message);
             }
+
             MessageResponse messageResponse = (MessageResponse) GsonUtils.getObjectFromJson(response, MessageResponse.class);
             keyString = messageResponse.getMessageKey();
             if (!TextUtils.isEmpty(keyString)) {

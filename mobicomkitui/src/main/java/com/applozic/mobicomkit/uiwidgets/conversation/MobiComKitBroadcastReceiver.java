@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.applozic.mobicomkit.api.MobiComKitConstants;
 import com.applozic.mobicomkit.api.conversation.Message;
@@ -16,6 +17,7 @@ import com.applozic.mobicomkit.uiwidgets.R;
 import com.applozic.mobicomkit.uiwidgets.instruction.InstructionUtil;
 
 import com.applozic.mobicommons.json.GsonUtils;
+import com.applozic.mobicommons.people.channel.Conversation;
 import com.applozic.mobicommons.people.contact.Contact;
 
 /**
@@ -110,6 +112,9 @@ public class MobiComKitBroadcastReceiver extends BroadcastReceiver {
             conversationUIService.reconnectMQTT();
         } else if(BroadcastService.INTENT_ACTIONS.CHANNEL_SYNC.toString().equals(action)){
             conversationUIService.updateChannelSync();
+        }else if(BroadcastService.INTENT_ACTIONS.USER_BUSY.toString().equals(action)){
+            String currentUserId = intent.getStringExtra(Conversation.USER_ID_KEY);
+            conversationUIService.updateBusyMessageStatus(currentUserId);
         }
     }
 }
